@@ -45,8 +45,6 @@ module wptr_full #(parameter ADDR_SIZE = 4)(
     assign wgray_next = (wbin_next>>1) ^ wbin_next;    // Convert binary to gray code
 
     // Check if the FIFO is full
-    //------------------------------------------------------------------
-    // Simplified version of the three necessary full-tests:
     // assign wfull_val=((wg_next[ADDR_SIZE] !=wq2_rptr[ADDR_SIZE] ) &&
     // (wg_next[ADDR_SIZE-1] !=wq2_rptr[ADDR_SIZE-1]) &&
     // (wg_next[ADDR_SIZE-2:0]==wq2_rptr[ADDR_SIZE-2:0]));
