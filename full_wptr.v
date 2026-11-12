@@ -43,12 +43,7 @@ module wptr_full #(parameter ADDR_SIZE = 4)(
     assign waddr = wbin[ADDR_SIZE-1:0];             // Write address calculation from the write pointer
     assign wbin_next = wbin + (winc & ~wfull);       // Increment the write pointer if not full
     assign wgray_next = (wbin_next>>1) ^ wbin_next;    // Convert binary to gray code
-
-    // Check if the FIFO is full
-    // assign wfull_val=((wg_next[ADDR_SIZE] !=wq2_rptr[ADDR_SIZE] ) &&
-    // (wg_next[ADDR_SIZE-1] !=wq2_rptr[ADDR_SIZE-1]) &&
-    // (wg_next[ADDR_SIZE-2:0]==wq2_rptr[ADDR_SIZE-2:0]));
-    //------------------------------------------------------------------
+    
     assign wfull_val = (wgray_next=={~wq2_rptr[ADDR_SIZE:ADDR_SIZE-1], wq2_rptr[ADDR_SIZE-2:0]});
 
     always @(posedge wclk or negedge wrst_n) begin
