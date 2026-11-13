@@ -1,55 +1,52 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 28.01.2026 01:52:33
-// Design Name: 
-// Module Name: wptr_full
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
+`timescale 1ns / 1ps
 
 module wptr_full #(parameter ADDR_SIZE = 4)(
-    output reg wfull,                   // Full flag
-    output [ADDR_SIZE-1:0] waddr,       // Write address
-    output reg [ADDR_SIZE :0] wptr,     // Write pointer
-    input [ADDR_SIZE :0] wq2_rptr,      // Read pointer (gray) - synchronised to write clock domain
-    input winc, wclk, wrst_n            // Write increment, write-clock, and reset
-    );
+    output reg wfull,
+    output [ADDR_SIZE-1:0] waddr,
+    output reg [ADDR_SIZE:0] wptr,
 
-    reg [ADDR_SIZE:0] wbin;                     // Binary write pointer
-    wire [ADDR_SIZE:0] wgray_next, wbin_next;   // Next write pointer in gray and binary code
-    wire wfull_val;                             // Full flag value
-    
-    // Synchronous FIFO write pointer (gray code)
+    input [ADDR_SIZE:0] wq2_rptr,
+
+    input winc, wclk, wrst_n
+);
+
+    reg [ADDR_SIZE:0] wbin;
+
+    wire [ADDR_SIZE:0] wgray_next, wbin_next;
+    wire wfull_val;
+
+    // Write pointer update
     always @(posedge wclk or negedge wrst_n) begin
-        if (!wrst_n)            // Reset the FIFO
+
+        if (!wrst_n)
             {wbin, wptr} <= 0;
-        else 
-            {wbin, wptr} <= {wbin_next, wgray_next}; // Shift the write pointer
+
+        else
+            {wbin, wptr} <= {wbin_next, wgray_next};
+
     end
 
-    assign waddr = wbin[ADDR_SIZE-1:0];             // Write address calculation from the write pointer
-    assign wbin_next = wbin + (winc & ~wfull);       // Increment the write pointer if not full
-    assign wgray_next = (wbin_next>>1) ^ wbin_next;    // Convert binary to gray code
-    
-    assign wfull_val = (wgray_next=={~wq2_rptr[ADDR_SIZE:ADDR_SIZE-1], wq2_rptr[ADDR_SIZE-2:0]});
+    assign waddr = wbin[ADDR_SIZE-1:0];
+
+    assign wbin_next = wbin + (winc & ~wfull);
+
+    assign wgray_next = (wbin_next >> 1) ^ wbin_next;
+
+    // Full detection
+    assign wfull_val =
+        (wgray_next ==
+        {~wq2_rptr[ADDR_SIZE:ADDR_SIZE-1],
+          wq2_rptr[ADDR_SIZE-2:0]});
 
     always @(posedge wclk or negedge wrst_n) begin
-        if (!wrst_n)            // Reset the full flag
+
+        if (!wrst_n)
             wfull <= 1'b0;
-        else 
-            wfull <= wfull_val; // Update the full flag
+
+        else
+            wfull <= wfull_val;
+
     end
+
 endmodule
