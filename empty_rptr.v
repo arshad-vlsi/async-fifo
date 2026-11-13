@@ -1,57 +1,49 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 28.01.2026 01:50:44
-// Design Name: 
-// Module Name: rptr_empty
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
+`timescale 1ns / 1ps
 
 module rptr_empty #(parameter ADDR_SIZE = 4)(
-    output reg rempty,                  // Empty flag
-    output [ADDR_SIZE-1:0] raddr,       // Read address
-    output reg [ADDR_SIZE :0] rptr,     // Read pointer
-    input [ADDR_SIZE :0] rq2_wptr,      // Write pointer (gray) - synchronised to read clock domain
-    input rinc, rclk, rrst_n            // Read increment, read-clock, and reset
-    );
+    output reg rempty,
+    output [ADDR_SIZE-1:0] raddr,
+    output reg [ADDR_SIZE:0] rptr,
 
-    reg [ADDR_SIZE:0] rbin;                     // Binary read pointer
-    wire [ADDR_SIZE:0] rgray_next, rbin_next;   // Next read pointer in gray and binary code
-    wire rempty_val;                            // Empty flag value
+    input [ADDR_SIZE:0] rq2_wptr,
 
-    // Synchronous FIFO read pointer (gray code)
+    input rinc, rclk, rrst_n
+);
+
+    reg [ADDR_SIZE:0] rbin;
+
+    wire [ADDR_SIZE:0] rgray_next, rbin_next;
+    wire rempty_val;
+
+    // Read pointer update
     always @(posedge rclk or negedge rrst_n) begin
-        if (!rrst_n)                // Reset the FIFO
+
+        if (!rrst_n)
             {rbin, rptr} <= 0;
-        else 
-            {rbin, rptr} <= {rbin_next, rgray_next};  // Shift the read pointer
+
+        else
+            {rbin, rptr} <= {rbin_next, rgray_next};
+
     end
 
-    assign raddr = rbin[ADDR_SIZE-1:0];                 // Read address calculation from the read pointer
-    assign rbin_next = rbin + (rinc & ~rempty);         // Increment the read pointer if not empty
-    assign rgray_next = (rbin_next>>1) ^ rbin_next;     // Convert binary to gray code
+    assign raddr = rbin[ADDR_SIZE-1:0];
 
-    // Check if the FIFO is empty
-    assign rempty_val = (rgray_next == rq2_wptr);       // Empty flag calculation
+    assign rbin_next = rbin + (rinc & ~rempty);
+
+    assign rgray_next = (rbin_next >> 1) ^ rbin_next;
+
+    // Empty detection
+    assign rempty_val = (rgray_next == rq2_wptr);
 
     always @(posedge rclk or negedge rrst_n) begin
-        if (!rrst_n)                // Reset the empty flag
+
+        if (!rrst_n)
             rempty <= 1'b1;
-        else 
-            rempty <= rempty_val;  // Update the empty flag
+
+        else
+            rempty <= rempty_val;
+
     end
-    
+
 endmodule
