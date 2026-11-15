@@ -113,7 +113,7 @@ async-fifo/
 │   │   ├── power.rpt
 │   │   ├── gates.rpt
 │   │   └── timing.rpt
-│   └── waveform_simvision.png    ← SimVision capture of a write/read sequence
+│   └── waveform.png    ← SimVision capture of a write/read sequence
 ├── LICENSE
 ├── .gitignore
 └── README.md
