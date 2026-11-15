@@ -105,10 +105,8 @@ async-fifo/
 │   └── sync_r2w.v          ← Read-to-Write synchronizer
 ├── tb/
 │   ├── async_fifo_tb.v            ← Self-checking Verilog testbench
-│   └── async_fifo_tb_layered.sv   ← Class-based SystemVerilog testbench
 ├── sdc/
 │   ├── async_fifo.sdc       ← Nominal constraints (100 MHz write / 50 MHz read)
-│   └── iterations/          ← Tighter constraint sets for max-frequency exploration
 ├── docs/
 │   ├── synthesis/
 │   │   ├── area.rpt
