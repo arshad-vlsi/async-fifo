@@ -1,7 +1,6 @@
 # ⚡ Asynchronous FIFO (Dual-Clock, CDC) using Verilog
 
 ![Verilog](https://img.shields.io/badge/Verilog%20HDL-8957e5?style=flat-square)
-![SystemVerilog](https://img.shields.io/badge/SystemVerilog-8957e5?style=flat-square)
 ![Cadence Xcelium](https://img.shields.io/badge/Cadence%20Xcelium-e36209?style=flat-square)
 ![Cadence Genus](https://img.shields.io/badge/Cadence%20Genus-e36209?style=flat-square)
 ![SDC](https://img.shields.io/badge/SDC%20Constraints-0075ca?style=flat-square)
@@ -123,7 +122,7 @@ async-fifo/
 
 ## 📊 Simulation Waveform
 
-![Waveform](docs/waveform_simvision.png)
+![Waveform](docs/waveform.png)
 
 Waveform shows `wclk`, `rclk`, `winc`, `rinc`, `wdata`, `wptr`, `wfull`, `rinc`, `rptr`, `rempty` and `rdata`, captured in Cadence SimVision across a write-then-read sequence (writes `0x10`–`0x17`, read back in order, `rempty` falling after the first write and rising after the last read).
 
