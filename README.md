@@ -29,7 +29,6 @@ The design was carried from RTL through **functional verification, SDC constrain
 | `sync_w2r.v` | Write→Read clock domain pointer synchronizer (2-flop) |
 | `sync_r2w.v` | Read→Write clock domain pointer synchronizer (2-flop) |
 | `async_fifo_tb.v` | Self-checking Verilog testbench (scoreboard-based) |
-| `async_fifo_tb_layered.sv` | Class-based SystemVerilog testbench (transaction / generator / driver / monitor / scoreboard) |
 
 > **Note:** an earlier revision of `sync_w2r.v` / `sync_r2w.v` had a port-width mismatch (`WIDTH` instantiated as `ASIZE+1` against ports sized `[WIDTH:0]`) and used `WIDTH` before declaring it in the module header. Both were fixed — ports now size correctly against the top-level pointer wires, and `WIDTH` is declared as an ANSI-style parameter.
 
@@ -60,7 +59,7 @@ The design was carried from RTL through **functional verification, SDC constrain
 - ✅ 2-flop synchronizers for metastability prevention
 - ✅ Active-low reset for both clock domains
 - ✅ `wfull` & `rempty` status flags, each registered and generated in its own clock domain
-- ✅ Verified with two testbenches: a self-checking plain-Verilog testbench and a layered, class-based SystemVerilog testbench
+- ✅ Verified with two testbenches: a self-checking plain-Verilog testbench 
 - ✅ Simulated in **Cadence Xcelium**, waveforms analyzed in **SimVision**
 - ✅ Synthesized in **Cadence Genus (90nm, slow corner)** with asynchronous clock-group SDC constraints
 
@@ -68,10 +67,9 @@ The design was carried from RTL through **functional verification, SDC constrain
 
 ## 🧪 Verification
 
-Two testbenches are included, both exercising the same five scenarios — reset state, basic write/read-back, overflow (write past full), underflow (read past empty), and concurrent pseudo-random read/write across both clocks:
+Testbench is included, exercising five scenarios — reset state, basic write/read-back, overflow (write past full), underflow (read past empty), and concurrent pseudo-random read/write across both clocks:
 
 - **`async_fifo_tb.v`** — plain Verilog, self-checking against a software scoreboard, prints `PASS`/`FAIL` per check and a final test verdict.
-- **`async_fifo_tb_layered.sv`** — the same coverage restructured into transaction, generator, driver, monitor and scoreboard classes connected through mailboxes, for a more industry-style verification environment.
 
 ---
 
@@ -133,7 +131,7 @@ Waveform shows `wclk`, `rclk`, `winc`, `rinc`, `wdata`, `wptr`, `wfull`, `rinc`,
 - Mastered Clock Domain Crossing (CDC) in digital design, including the full/empty-distinguishing extra-MSB pointer technique
 - Implemented Gray-coded pointers with 2-flop synchronizers to avoid metastability
 - Debugged real RTL issues: a port-width mismatch and a parameter-declaration-order issue in the synchronizer modules, and a missing-module (unresolved reference) issue during synthesis
-- Wrote and compared two testbench styles — directed/self-checking Verilog and a class-based SystemVerilog verification environment
+- Wrote self-checking Verilog testbench
 - Wrote SDC constraints (including asynchronous clock groups) and synthesized the design in Cadence Genus
 - Explored the practical maximum operating frequency through iterative SDC constraint tightening
 
